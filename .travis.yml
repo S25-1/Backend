@@ -4,3 +4,5 @@ mono: none
 before_install:
 - openssl aes-256-cbc -K $encrypted_45d6741a46dd_key -iv $encrypted_45d6741a46dd_iv
   -in appsettings.json.enc -out CgiApiRework/appsettings.json -d
+script:
+ - dotnet restore
