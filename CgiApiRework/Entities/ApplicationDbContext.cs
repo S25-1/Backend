@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using CgiApiRework.EfModels;
 
 namespace CgiApiRework.Entities
 {
@@ -14,5 +15,8 @@ namespace CgiApiRework.Entities
             : base(options)
         {
         }
+        public DbSet<CgiApiRework.EfModels.Skill> Skill { get; set; }
+
+
     }
 }
