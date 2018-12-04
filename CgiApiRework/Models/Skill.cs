@@ -18,5 +18,11 @@ namespace CgiApiRework.Models
             SkillTypeName = skillTypeName;
         }
 
+        public Skill(int skillTypeID)
+        {
+            SkillTypeID = skillTypeID;
+            SkillTypeName = "null";
+        }
+
     }
 }

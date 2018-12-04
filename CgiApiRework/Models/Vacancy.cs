@@ -15,7 +15,7 @@ namespace CgiApiRework.Models
         public int UserID { get; set; }
         public string Name { get; set; }
         public int JobType { get; set; }
-        public List<int> RequiredSkills { get; set; }
+        public List<Skill> RequiredSkills { get; set; }
         public string Description { get; set; }
         public DateTime BeginDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
@@ -25,7 +25,7 @@ namespace CgiApiRework.Models
         private static readonly string ConnectionString = Startup.ConnectionString;
 
         [JsonConstructor]
-        public Vacancy(int userID, string name, int jobType, List<int> requiredSkills, string description, DateTime beginDateTime, DateTime endDateTime, int minimalExperience)
+        public Vacancy(int userID, string name, int jobType, List<Skill> requiredSkills, string description, DateTime beginDateTime, DateTime endDateTime, int minimalExperience)
         {
             this.VacancyID = -1;
             this.UserID = userID;
@@ -44,7 +44,11 @@ namespace CgiApiRework.Models
             this.UserID = userID;
             this.Name = name;
             this.JobType = jobType;
-            this.RequiredSkills = requiredSkills;
+            this.RequiredSkills = new List<Skill>();
+            foreach (int item in requiredSkills)
+            {
+                RequiredSkills.Add(new Skill(item));
+            }
             this.Description = description;
             this.BeginDateTime = beginDateTime;
             this.EndDateTime = endDateTime;
@@ -83,11 +87,11 @@ namespace CgiApiRework.Models
                         "INSERT INTO Vacancy (UserID, Job_TypeID, Date_begin, Date_end, Description, MinMonthsExperience, Name) " + "VALUES (@UserID, @Job_TypeID, @Date_begin, @Date_end, @Description, @MinMonthsExperience, @Name)";
                     command.ExecuteNonQuery();
 
-                    foreach (int skillID in Vacancy.RequiredSkills)
+                    foreach (Skill skill in Vacancy.RequiredSkills)
                     {
                         command.CommandText =
                         "INSERT INTO Skill_Vacancy (Skill_ID, VacancyID) SELECT @SkillTypeID, VacancyID FROM Vacancy WHERE UserID=@UserID AND Job_TypeID=@Job_TypeID AND Date_begin=@Date_begin AND Date_end=@Date_end AND Description=@Description AND MinMonthsExperience=@MinMonthsExperience AND Name=@Name";
-                        command.Parameters.AddWithValue("@SkillTypeID", skillID);
+                        command.Parameters.AddWithValue("@SkillTypeID", skill.SkillTypeID);
                         command.ExecuteNonQuery();
                         command.Parameters.RemoveAt("@SkillTypeID");
                     }
@@ -388,9 +392,9 @@ namespace CgiApiRework.Models
 
                     foreach (Vacancy v in vacancyList)
                     {
-                        v.RequiredSkills = new List<int>();
+                        v.RequiredSkills = new List<Skill>();
 
-                        command.CommandText = "SELECT Skill.Skill_ID FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
+                        command.CommandText = "SELECT Skill.Skill_ID, Skill.Skill_name FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
                         command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -398,7 +402,7 @@ namespace CgiApiRework.Models
                             {
                                 while (reader.Read())
                                 {
-                                    v.RequiredSkills.Add(reader.GetInt32(0));
+                                    v.RequiredSkills.Add(new Skill(reader.GetInt32(0), reader.GetString(1)));
                                 }
                             }
                             command.Parameters.RemoveAt("@VacancyID");
@@ -512,9 +516,9 @@ namespace CgiApiRework.Models
 
                     foreach (Vacancy v in vacancyList)
                     {
-                        v.RequiredSkills = new List<int>();
+                        v.RequiredSkills = new List<Skill>();
 
-                        command.CommandText = "SELECT Skill.Skill_ID FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
+                        command.CommandText = "SELECT Skill.Skill_ID, Skill.Skill_name FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
                         command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
                         using (SqlDataReader reader = command.ExecuteReader())
                         {
@@ -522,7 +526,7 @@ namespace CgiApiRework.Models
                             {
                                 while (reader.Read())
                                 {
-                                    v.RequiredSkills.Add(reader.GetInt32(0));
+                                    v.RequiredSkills.Add(new Skill(reader.GetInt32(0), reader.GetString(1)));
                                 }
                             }
                             command.Parameters.RemoveAt("@VacancyID");

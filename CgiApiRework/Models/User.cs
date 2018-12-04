@@ -43,7 +43,7 @@ namespace CgiApiRework.Models
         }
 
         [JsonConstructor]
-        public User(string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID ,Address address, Job_Type job, int branchID, List<Skill> skillList)
+        public User(string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, Address address, Job_Type job, List<int> skillList)
         {
             UserID = -1;
             Name = name;
@@ -54,9 +54,13 @@ namespace CgiApiRework.Models
             Address = address;
             Job = job;
             Hourly_wage = hourly_wage;
-            Branch = new Branch(branchID);
-            UserTypeID = userTypeID;
-            SkillList = skillList;
+            Branch = new Branch(1);
+            UserTypeID = 1;
+            SkillList = new List<Skill>();
+            foreach (int item in skillList)
+            {
+                SkillList.Add(new Skill(item));
+            }
         }
 
         public static void test(User user)
