@@ -62,7 +62,6 @@ namespace CgiApiRework.Controllers
             if (vacancy != null)
             {
                 message.Content = new StringContent(Vacancy.AddVacancy(vacancy));
-                Vacancy.AddVacancy(vacancy);
             }
             else
             {
