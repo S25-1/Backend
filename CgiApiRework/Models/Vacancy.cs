@@ -24,7 +24,6 @@ namespace CgiApiRework.Models
 
         private static readonly string ConnectionString = Startup.ConnectionString;
 
-        [JsonConstructor]
         public Vacancy(int userID, string name, int jobType, List<Skill> requiredSkills, string description, DateTime beginDateTime, DateTime endDateTime, int minimalExperience)
         {
             this.VacancyID = -1;
@@ -37,6 +36,25 @@ namespace CgiApiRework.Models
             this.EndDateTime = endDateTime;
             this.MinimalExperience = minimalExperience;
         }
+
+        [JsonConstructor]
+        public Vacancy(int userID, string name, int jobType, string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
+        {
+            this.VacancyID = -1;
+            this.UserID = userID;
+            this.Name = name;
+            this.JobType = jobType;
+            this.RequiredSkills = new List<Skill>();
+            foreach (int item in requiredSkills)
+            {
+                RequiredSkills.Add(new Skill(item));
+            }
+            this.Description = description;
+            this.BeginDateTime = beginDateTime;
+            this.EndDateTime = endDateTime;
+            this.MinimalExperience = minimalExperience;
+        }
+
 
         public Vacancy(int vacancyID, int userID, string name, int jobType,string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
         {
