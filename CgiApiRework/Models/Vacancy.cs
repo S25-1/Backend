@@ -314,7 +314,7 @@ namespace CgiApiRework.Models
 
                 try
                 {
-                    command.CommandText = "SELECT * FROM RespondVacancyUser";
+                    command.CommandText = "SELECT * FROM AcceptedUser";
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
