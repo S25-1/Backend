@@ -34,7 +34,7 @@ namespace CgiApiRework
                 options.AddPolicy("AllowTrusted",
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200", "https://cgi.fontys.me")
+                        builder.WithOrigins("http://localhost:4200", "https://cgi.fontys.me", "https://staging.cgi.fontys.me")
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
                             .WithOrigins("https://*.cgi.fontys.me")
                             .AllowAnyMethod()

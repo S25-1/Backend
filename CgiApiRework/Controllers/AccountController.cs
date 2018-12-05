@@ -64,13 +64,24 @@ namespace CgiApiRework.Controllers
             };
             var result = await _userManager.CreateAsync(user, model.Password);
 
+            // Easy hacky fix to readd role if you move the database
+            //var role = new IdentityRole();
+            //role.Name = "employer";
+            //await _roleManager.CreateAsync(role);
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
 
                 await _userManager.AddToRoleAsync(user, "employer");
 
-                return await GenerateJwtToken(model.Email, user);
+                var userRole = await _userManager.GetRolesAsync(user);
+
+                var JwtToken = await GenerateJwtToken(model.Email, user);
+
+                return $"{{ " +
+                       $" \"token\": \"{JwtToken}\", " +
+                       $" \"role\":  \"employer\" " + //Temp fix for consistent login
+                       $"}}"; // Return token as JSON
             }
 
             throw new ApplicationException("UNKNOWN_ERROR");
