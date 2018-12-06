@@ -53,7 +53,7 @@ namespace CgiApiRework.Controllers
             return Vacancy.GetListRespondVacancyUser(id);
         }
 
-        //Voegt een vacature in de database met de class Vacancy
+        // Voegt een vacature in de database met de class Vacancy
         [Route("api/vacancy/add")]
         [HttpPost]
         public HttpResponseMessage AddVacancy([FromBody]Vacancy vacancy)

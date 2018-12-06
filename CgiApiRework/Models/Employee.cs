@@ -11,7 +11,7 @@ namespace CgiApiRework.Models
         public List<Availability> AvailabilityList { get; set; }
         public List<Vacancy> ListAppliedJobs { get; set; }
 
-        public Employee(int userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Availability> availabilityList, List<Vacancy> listAppliedJobs) : base(userID, name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
+        public Employee(string userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Availability> availabilityList, List<Vacancy> listAppliedJobs) : base(userID, name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
         {
             UserID = userID;
             Name = name;
@@ -29,7 +29,7 @@ namespace CgiApiRework.Models
             ListAppliedJobs = listAppliedJobs;
         }
 
-        public Employee(string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Availability> availabilityList, List<Vacancy> listAppliedJobs) : base(-1, name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
+        public Employee(string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Availability> availabilityList, List<Vacancy> listAppliedJobs) : base("null", name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
         {
             Name = name;
             Email = email;

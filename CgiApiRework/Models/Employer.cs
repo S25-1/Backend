@@ -15,7 +15,7 @@ namespace CgiApiRework.Models
         //static private string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Mike\OneDrive\school\mike_backend\CGIdatabase.mdf;Integrated Security=True;Connect Timeout=30";
         static private SqlConnection conn = new SqlConnection(connectionString);
 
-        public Employer(int userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, int userTypeID, decimal hourly_wage, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Vacancy> listVacancies) : base(userID, name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
+        public Employer(string userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, int userTypeID, decimal hourly_wage, Address address, Job_Type job, Branch branch, List<Skill> skillList, List<Vacancy> listVacancies) : base(userID, name, email, password, dateOfBirth, phoneNumber, hourly_wage, userTypeID, address, job, branch, skillList)
         {
             UserID = userID;
             Name = name;
@@ -32,7 +32,7 @@ namespace CgiApiRework.Models
             ListVacancies = listVacancies;
         }
 
-        public Employer() : base(0, "null", "null", "null", new DateTime(), "null",0 , 0, new Address(0), new Job_Type(0), new Branch(0), new List<Skill>())
+        public Employer() : base("null", "null", "null", "null", new DateTime(), "null",0 , 0, new Address(0), new Job_Type(0), new Branch(0), new List<Skill>())
         {
 
         }
@@ -79,7 +79,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                employer = new Employer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
+                                employer = new Employer(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
                                                         reader.GetDateTime(4), reader.GetString(5), reader.GetInt32(6),
                                                         reader.GetDecimal(7), new Address(reader.GetInt32(8), reader.GetString(9),
                                                         reader.GetString(10), reader.GetString(11), reader.GetString(12),
@@ -104,7 +104,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                employer = new Employer(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
+                                employer = new Employer(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3),
                                                         reader.GetDateTime(4), reader.GetString(5), reader.GetInt32(6),
                                                         reader.GetDecimal(7), new Address(reader.GetInt32(8), reader.GetString(9),
                                                         reader.GetString(10), reader.GetString(11), reader.GetString(12), reader.GetString(13)), 
