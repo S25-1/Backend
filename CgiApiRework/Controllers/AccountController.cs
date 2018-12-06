@@ -80,7 +80,7 @@ namespace CgiApiRework.Controllers
 
                 return $"{{ " +
                        $" \"token\": \"{JwtToken}\", " +
-                       $" \"role\":  \"employer\" " + //Temp fix for consistent login
+                       $" \"role\":  \"{userRole}\" " + // Temp fix for consistent login
                        $"}}"; // Return token as JSON
             }
 

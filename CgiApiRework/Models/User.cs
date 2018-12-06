@@ -9,7 +9,7 @@ namespace CgiApiRework.Models
 {
     public class User
     {
-        public int UserID { get; set; }
+        public string UserID { get; set; }
         public int UserTypeID { get; set; }
         public string Name { get; set; }
         public string Email { get; set; }
@@ -26,7 +26,7 @@ namespace CgiApiRework.Models
         //static private string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Mike\OneDrive\school\mike_backend\CGIdatabase.mdf;Integrated Security=True;Connect Timeout=30";
         static private SqlConnection conn = new SqlConnection(connectionString);
 
-        public User(int userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList)
+        public User(string userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList)
         {
             UserID = userID;
             Name = name;
@@ -45,7 +45,7 @@ namespace CgiApiRework.Models
         [JsonConstructor]
         public User(string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, Address address, Job_Type job, List<int> skillList)
         {
-            UserID = -1;
+            UserID = "null";
             Name = name;
             Email = email;
             Password = password;

@@ -12,7 +12,7 @@ namespace CgiApiRework.Models
     public class Vacancy
     {
         public int VacancyID { get; set; }
-        public int UserID { get; set; }
+        public string UserID { get; set; }
         public string Name { get; set; }
         public int JobType { get; set; }
         public List<Skill> RequiredSkills { get; set; }
@@ -24,7 +24,7 @@ namespace CgiApiRework.Models
 
         private static readonly string ConnectionString = Startup.ConnectionString;
 
-        public Vacancy(int userID, string name, int jobType, List<Skill> requiredSkills, string description, DateTime beginDateTime, DateTime endDateTime, int minimalExperience)
+        public Vacancy(string userID, string name, int jobType, List<Skill> requiredSkills, string description, DateTime beginDateTime, DateTime endDateTime, int minimalExperience)
         {
             this.VacancyID = -1;
             this.UserID = userID;
@@ -38,7 +38,7 @@ namespace CgiApiRework.Models
         }
 
         [JsonConstructor]
-        public Vacancy(int userID, string name, int jobType, string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
+        public Vacancy(string userID, string name, int jobType, string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
         {
             this.VacancyID = -1;
             this.UserID = userID;
@@ -56,7 +56,7 @@ namespace CgiApiRework.Models
         }
 
 
-        public Vacancy(int vacancyID, int userID, string name, int jobType,string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
+        public Vacancy(int vacancyID, string userID, string name, int jobType,string description, int minimalExperience, DateTime beginDateTime, DateTime endDateTime, List<int> requiredSkills)
         {
             this.VacancyID = vacancyID;
             this.UserID = userID;
@@ -402,7 +402,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
+                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
                                 vacancyList.Add(vacancy);
                             }
                         }
@@ -525,7 +525,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetInt32(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
+                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
                                 vacancyList.Add(vacancy);
                             }
                             command.Parameters.RemoveAt("@VacancyID");
@@ -605,7 +605,7 @@ namespace CgiApiRework.Models
         }
 
 
-        static public ArrayList GetListRespondVacancyUser(int userID, int vacancyID, int statusID)
+        static public ArrayList GetListRespondVacancyUser(string userID, int vacancyID, int statusID)
         {
             ArrayList RespondVacancyUserList = new ArrayList();
 
