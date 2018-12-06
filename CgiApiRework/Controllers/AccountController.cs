@@ -46,9 +46,9 @@ namespace CgiApiRework.Controllers
                 var userRole = await _userManager.GetRolesAsync(appUser);
 
                 return $"{{ " +
-                        $" \"token\": \"{JwtToken}\", " +
-                        $" \"role\":  \"{userRole[0]}\" " +
-                       $"  \"user_id\":  \"{appUser.Id}\" " +
+                        $" \"token\": \"{JwtToken}\" " +
+                        $", \"role\":  \"{userRole[0]}\" " +
+                        $", \"user_id\":  \"{appUser.Id}\" " +
                        $"}}"; // Return token as JSON
             }
 
@@ -82,9 +82,9 @@ namespace CgiApiRework.Controllers
                 var JwtToken = await GenerateJwtToken(model.Email, user);
 
                 return $"{{ " +
-                       $" \"token\": \"{JwtToken}\", " +
-                       $" \"role\":  \"{userRole}\" " +
-                       $" \"user_id\":  \"{appUser.Id}\" " +
+                       $" \"token\": \"{JwtToken}\" " +
+                       $", \"role\":  \"{userRole}\" " +
+                       $", \"user_id\":  \"{appUser.Id}\" " +
                        $"}}"; // Return token as JSON
             }
 
