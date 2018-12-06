@@ -94,9 +94,11 @@ namespace CgiApiRework.Models
                     command.Parameters.AddWithValue("@Postal_code", user.Address.Postal_code);
 
                     command.CommandText =
-                        "INSERT INTO Address (Country, City, Street_name, House_number, Postal_code) " + "VALUES (@Country, @City, @Street_name, @House_number, @Postal_code)";
+                        "INSERT INTO Address (Country, City, Street_name, House_number, Postal_code) " +
+                        "VALUES (@Country, @City, @Street_name, @House_number, @Postal_code)";
                     command.ExecuteNonQuery();
 
+                    command.Parameters.AddWithValue("@UserID", user.UserID);
                     command.Parameters.AddWithValue("@Name", user.Name);
                     command.Parameters.AddWithValue("@Email", user.Email);
                     command.Parameters.AddWithValue("@Password", user.Password);
@@ -106,12 +108,16 @@ namespace CgiApiRework.Models
                     command.Parameters.AddWithValue("@Hourly_wage", user.Hourly_wage);
                     command.Parameters.AddWithValue("@Branch_ID", user.Branch.BranchID);
                     command.Parameters.AddWithValue("@UserTypeID", user.UserTypeID);
+                    
+                   
 
                     command.CommandText =
-                        "INSERT INTO [User] (Name, Email, Password, Date_of_birth, Phone_number, AddressID, Job_TypeID, Hourly_wage, BranchID, UserTypeID) SELECT @Name, @Email, @Password, @Date_of_birth, @Phone_number, a.AddressID, @Job_TypeID, @Hourly_wage, @Branch_ID, @UserTypeID FROM (SELECT AddressID FROM Address a WHERE a.City = @City AND a.Country = @Country AND a.House_number = @House_number AND a.Postal_code = @Postal_code AND a.Street_name = @Street_name) as a ";
+                        @"  INSERT INTO [User] (UserID, Name, Email, Password, Date_of_birth, Phone_number, AddressID, Job_TypeID, Hourly_wage, BranchID, UserTypeID)
+                            SELECT @UserID, @Name, @Email, @Password, @Date_of_birth, @Phone_number, a.AddressID, @Job_TypeID, @Hourly_wage, @Branch_ID, @UserTypeID
+                            FROM (SELECT AddressID FROM Address a WHERE a.City = @City AND a.Country = @Country AND a.House_number = @House_number AND a.Postal_code = @Postal_code AND a.Street_name = @Street_name) AS a ";
                     command.ExecuteNonQuery();
 
-                    command.Parameters.AddWithValue("@UserID", user.UserID);
+                    //command.Parameters.AddWithValue("@UserID", user.UserID);
                     foreach (Skill skill in user.SkillList)
                     {
                         command.CommandText =
