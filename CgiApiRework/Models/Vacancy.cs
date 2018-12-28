@@ -339,7 +339,8 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2));
+
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }
@@ -636,7 +637,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2));
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }
@@ -702,7 +703,7 @@ namespace CgiApiRework.Models
                         {
                             while (reader.Read())
                             {
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2));
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }

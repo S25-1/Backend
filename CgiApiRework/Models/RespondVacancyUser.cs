@@ -8,11 +8,11 @@ namespace CgiApiRework.Models
 {
     public class RespondVacancyUser
     {
-        public int UserID { get; set; }
+        public string UserID { get; set; }
         public int VacancyID { get; set; }
         public int StatusID { get; set; }
 
-        public RespondVacancyUser(int userID, int vacancyID)
+        public RespondVacancyUser(string userID, int vacancyID)
         {
             UserID = userID;
             VacancyID = vacancyID;
@@ -20,7 +20,7 @@ namespace CgiApiRework.Models
         }
 
         [JsonConstructor]
-        public RespondVacancyUser(int userID, int vacancyID, int statusID)
+        public RespondVacancyUser(string userID, int vacancyID, int statusID)
         {
             UserID = userID;
             VacancyID = vacancyID;

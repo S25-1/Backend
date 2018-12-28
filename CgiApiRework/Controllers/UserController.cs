@@ -60,7 +60,7 @@ namespace cgiAPI.Controllers
             }
             else
             {
-                throw new Exception("FAILED TO ADD EMPLOYEE");
+                return result.Errors;
             }
 
             return result.Succeeded;
