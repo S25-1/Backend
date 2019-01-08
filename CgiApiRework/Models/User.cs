@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -7,6 +8,28 @@ using System.Threading.Tasks;
 
 namespace CgiApiRework.Models
 {
+    public class UserData
+    {
+        public string UserName { get; set; }
+        public string UserEmail { get; set; }
+        public string PhoneNumber { get; set; }
+
+        [JsonConstructor]
+        public UserData(string userName, string userEmail, string phoneNumber)
+        {
+            UserName = userName;
+            UserEmail = userEmail;
+            PhoneNumber = phoneNumber;
+        }
+
+        public UserData()
+        {
+
+        }
+
+    }
+
+
     public class User
     {
         public string UserID { get; set; }
@@ -61,11 +84,6 @@ namespace CgiApiRework.Models
             {
                 SkillList.Add(new Skill(item));
             }
-        }
-
-        public static void test(User user)
-        {
-            User kek = user;
         }
 
         public static string AddUser(User user)
@@ -151,6 +169,67 @@ namespace CgiApiRework.Models
                         Console.WriteLine("  Message: {0}", ex2.Message);
                     }
                     return ex.Message;
+                }
+            }
+        }
+
+        public static ArrayList GetUserById(string userID)
+        {
+            ArrayList user = new ArrayList();
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@userID", userID);
+
+                    command.CommandText = "SELECT u.UserName, u.Email, u.PhoneNumber FROM AspNetUsers u WHERE Id = @userID";
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                user.Add(new UserData(reader.GetString(0), reader.GetString(1), reader.GetString(2)));
+                            }
+                        }
+                    }
+
+                    return user;
+                }
+
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return user;
                 }
             }
         }

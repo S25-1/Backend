@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Threading.Tasks;
 using CgiApiRework.Models;
 using Microsoft.AspNetCore.Identity;
@@ -64,6 +65,14 @@ namespace cgiAPI.Controllers
             }
 
             return result.Succeeded;
+        }
+
+
+        [Route("api/user")]
+        [HttpGet]
+        public ArrayList GetUserDataById(string userID)
+        {
+            return CgiApiRework.Models.User.GetUserById(userID);
         }
     }
 }
