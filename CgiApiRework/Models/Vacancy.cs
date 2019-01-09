@@ -163,7 +163,7 @@ namespace CgiApiRework.Models
                 {
                     command.Parameters.AddWithValue("@VacancyID", user.VacancyID);
                     command.Parameters.AddWithValue("@UserID", user.UserID);
-                    command.Parameters.AddWithValue("@StatusID", user.StatusID);
+                    command.Parameters.AddWithValue("@StatusID", user.UserStatusID);
                     command.CommandText =
                         "INSERT INTO AcceptedUser (UserID, VacancyID, StatusID) " + "VALUES (@UserID, @VacancyID, @StatusID)";
                     command.ExecuteNonQuery();
@@ -220,7 +220,7 @@ namespace CgiApiRework.Models
                 {
                     command.Parameters.AddWithValue("@VacancyID", employee.VacancyID);
                     command.Parameters.AddWithValue("@UserID", employee.UserID);
-                    command.Parameters.AddWithValue("@StatusID", employee.StatusID);
+                    command.Parameters.AddWithValue("@StatusID", employee.UserStatusID);
                     command.CommandText = "UPDATE AcceptedUser SET StatusID = @StatusID WHERE VacancyID = @VacancyID AND UserID = @UserID";
                     command.ExecuteNonQuery();
 
@@ -275,7 +275,7 @@ namespace CgiApiRework.Models
                     {
                         command.Parameters.AddWithValue("@VacancyID", user.VacancyID);
                         command.Parameters.AddWithValue("@UserID", user.UserID);
-                        command.Parameters.AddWithValue("@StatusID", user.StatusID);
+                        command.Parameters.AddWithValue("@StatusID", user.UserStatusID);
                         command.CommandText = "UPDATE AcceptedUser SET StatusID = @StatusID WHERE VacancyID = @VacancyID AND UserID = @UserID";
                         command.ExecuteNonQuery();
                         command.Parameters.RemoveAt("@VacancyID");
@@ -332,15 +332,83 @@ namespace CgiApiRework.Models
 
                 try
                 {
-                    command.CommandText = "SELECT * FROM AcceptedUser";
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID AND a";
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
                             while (reader.Read())
                             {
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)
+                                    , reader.GetString(5), reader.GetInt32(6), reader.GetString(7), reader.GetString(8), reader.GetString(9),
+                                    reader.GetDateTime(10), reader.GetDateTime(11));
+                                RespondVacancyUserList.Add(RespondVacancyUser);
+                            }
+                        }
+                    }
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
 
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
+                    Console.WriteLine("Both records are written to database.");
+
+                    return RespondVacancyUserList;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return RespondVacancyUserList;
+                }
+            }
+        }
+
+        public static ArrayList GetListRespondVacancyUser(string userID)
+        {
+            ArrayList RespondVacancyUserList = new ArrayList();
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@userID", userID);
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID AND au.StatusID = s.StatusID AND au.UserID = @userID";
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)
+                                    , reader.GetString(5), reader.GetInt32(6), reader.GetString(7), reader.GetString(8), reader.GetString(9),
+                                    reader.GetDateTime(10), reader.GetDateTime(11));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }
@@ -606,7 +674,7 @@ namespace CgiApiRework.Models
         }
 
 
-        static public ArrayList GetListRespondVacancyUser(string userID, int vacancyID, int statusID)
+        static public ArrayList GetListRespondVacancyUser(int vacancyID, int statusID)
         {
             ArrayList RespondVacancyUserList = new ArrayList();
 
@@ -630,14 +698,16 @@ namespace CgiApiRework.Models
                     command.Parameters.AddWithValue("@VacancyID", vacancyID);
                     command.Parameters.AddWithValue("@StatusID", statusID);
 
-                    command.CommandText = "SELECT * FROM AcceptedUser WHERE VacancyID = @VacancyID AND StatusID = @StatusID";
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID AND au.StatusID = s.StatusID AND au.VacancyID = @VacancyID AND au.StatusID = @StatusID";
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
                             while (reader.Read())
                             {
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)
+                                , reader.GetString(5), reader.GetInt32(6), reader.GetString(7), reader.GetString(8), reader.GetString(9),
+                                reader.GetDateTime(10), reader.GetDateTime(11));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }
@@ -696,14 +766,16 @@ namespace CgiApiRework.Models
                 {
                     command.Parameters.AddWithValue("@VacancyID", vacancyID);
 
-                    command.CommandText = "SELECT * FROM AcceptedUser WHERE VacancyID = @VacancyID";
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID AND au.StatusID = s.StatusID AND au.VacancyID = @VacancyID ";
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
                         {
                             while (reader.Read())
                             {
-                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2));
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)
+                                , reader.GetString(5), reader.GetInt32(6), reader.GetString(7), reader.GetString(8), reader.GetString(9),
+                                reader.GetDateTime(10), reader.GetDateTime(11));
                                 RespondVacancyUserList.Add(RespondVacancyUser);
                             }
                         }

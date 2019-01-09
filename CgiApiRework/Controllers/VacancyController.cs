@@ -36,14 +36,20 @@ namespace CgiApiRework.Controllers
             return Vacancy.GetListRespondVacancyUser();
         }
 
+        [Route("api/vacancy/responses/{userid}")]
+        [HttpGet]
+        public ArrayList GetListRespondVacancyUser(string userID)
+        {
+            return Vacancy.GetListRespondVacancyUser(userID);
+        }
+
+
         // Krijgt een lijst van gereageerde werknemers met het aangegeven VacancyID en StatusID
         [Route("api/vacancy/GetRespondVacancyUser")]
         [HttpGet]
-        public ArrayList GetRespondVacancyUserList(int userID, int vacancyID, int statusID)
+        public ArrayList GetRespondVacancyUserList(int vacancyID, int statusID)
         {
-            Employer employer = new Employer();
-            employer = Employer.GetEmployer(userID);
-            return Vacancy.GetListRespondVacancyUser(employer.UserID, vacancyID, statusID);
+            return Vacancy.GetListRespondVacancyUser(vacancyID, statusID);
         }
 
         [Route("api/vacancy/{id}/responses")]
