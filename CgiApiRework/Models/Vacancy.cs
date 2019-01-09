@@ -332,7 +332,7 @@ namespace CgiApiRework.Models
 
                 try
                 {
-                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID AND a";
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end FROM AcceptedUser au, AspNetUsers u, Vacancy v, Job_Type j, Status s WHERE au.UserID = u.Id AND v.VacancyID = au.VacancyID AND v.Job_TypeID = j.Job_typeID";
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows)
