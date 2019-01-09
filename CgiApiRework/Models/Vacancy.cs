@@ -564,6 +564,250 @@ namespace CgiApiRework.Models
             }
         }
 
+        public static ArrayList GetListVacancyFilterASC(string columnName)
+        {
+            ArrayList vacancyList = new ArrayList();
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@columnName", columnName);
+                    command.CommandText = "EXECUTE GetVacancyListASC @columnName";
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
+                                vacancyList.Add(vacancy);
+                            }
+                        }
+                    }
+
+                    foreach (Vacancy v in vacancyList)
+                    {
+                        v.RequiredSkills = new List<Skill>();
+
+                        command.CommandText = "SELECT Skill.Skill_ID, Skill.Skill_name FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
+                        command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    v.RequiredSkills.Add(new Skill(reader.GetInt32(0), reader.GetString(1)));
+                                }
+                            }
+                            command.Parameters.RemoveAt("@VacancyID");
+                        }
+
+                        command.Parameters.AddWithValue("@Job_TypeID", v.JobType);
+
+                        command.CommandText = "SELECT Job_TypeID FROM Job_Type WHERE Job_TypeID = @Job_TypeID";
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    v.JobType = reader.GetInt32(0);
+                                }
+                            }
+                            command.Parameters.RemoveAt("@Job_TypeID");
+                        }
+
+                        v.RespondVacancyUserList = new List<RespondVacancyUser>();
+
+                        //casting arraylist to class type
+                        foreach (RespondVacancyUser item in Vacancy.GetListRespondVacancyUser(v.VacancyID))
+                        {
+                            v.RespondVacancyUserList.Add(item);
+                        }
+
+                        //command.CommandText = "SELECT * FROM dbo.AcceptedUser WHERE VacancyID = @VacancyID";
+                        //command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
+                        //using (SqlDataReader reader = command.ExecuteReader())
+                        //{
+                        //    if (reader.HasRows)
+                        //    {
+                        //        while (reader.Read())
+                        //        {
+                        //            v.RespondVacancyUserList.Add(new RespondVacancyUser(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
+                        //        }
+                        //    }
+                        //    command.Parameters.RemoveAt("@VacancyID");
+                        //}
+                    }
+
+
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
+
+                    Console.WriteLine("Both records are written to database.");
+                    return vacancyList;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return vacancyList;
+                }
+            }
+        }
+
+        public static ArrayList GetListVacancyFilterDESC(string columnName)
+        {
+            ArrayList vacancyList = new ArrayList();
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@columnName", columnName);
+                    command.CommandText = "EXECUTE GetVacancyListDESC @columnName";
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                Vacancy vacancy = new Vacancy(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetInt32(3), reader.GetString(4), reader.GetInt32(5), reader.GetDateTime(6), reader.GetDateTime(7), new List<int>());
+                                vacancyList.Add(vacancy);
+                            }
+                        }
+                    }
+
+                    foreach (Vacancy v in vacancyList)
+                    {
+                        v.RequiredSkills = new List<Skill>();
+
+                        command.CommandText = "SELECT Skill.Skill_ID, Skill.Skill_name FROM Skill_Vacancy, Skill WHERE Skill_Vacancy.Skill_ID = Skill.Skill_ID AND Skill_Vacancy.VacancyID = @VacancyID";
+                        command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    v.RequiredSkills.Add(new Skill(reader.GetInt32(0), reader.GetString(1)));
+                                }
+                            }
+                            command.Parameters.RemoveAt("@VacancyID");
+                        }
+
+                        command.Parameters.AddWithValue("@Job_TypeID", v.JobType);
+
+                        command.CommandText = "SELECT Job_TypeID FROM Job_Type WHERE Job_TypeID = @Job_TypeID";
+                        using (SqlDataReader reader = command.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    v.JobType = reader.GetInt32(0);
+                                }
+                            }
+                            command.Parameters.RemoveAt("@Job_TypeID");
+                        }
+
+                        v.RespondVacancyUserList = new List<RespondVacancyUser>();
+
+                        //casting arraylist to class type
+                        foreach (RespondVacancyUser item in Vacancy.GetListRespondVacancyUser(v.VacancyID))
+                        {
+                            v.RespondVacancyUserList.Add(item);
+                        }
+
+                        //command.CommandText = "SELECT * FROM dbo.AcceptedUser WHERE VacancyID = @VacancyID";
+                        //command.Parameters.AddWithValue("@VacancyID", v.VacancyID);
+                        //using (SqlDataReader reader = command.ExecuteReader())
+                        //{
+                        //    if (reader.HasRows)
+                        //    {
+                        //        while (reader.Read())
+                        //        {
+                        //            v.RespondVacancyUserList.Add(new RespondVacancyUser(reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2)));
+                        //        }
+                        //    }
+                        //    command.Parameters.RemoveAt("@VacancyID");
+                        //}
+                    }
+
+
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
+
+                    Console.WriteLine("Both records are written to database.");
+                    return vacancyList;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return vacancyList;
+                }
+            }
+        }
+
         public static ArrayList GetListVacancy(int vacancyID)
         {
             ArrayList vacancyList = new ArrayList();

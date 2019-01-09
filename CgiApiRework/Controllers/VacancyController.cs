@@ -22,6 +22,20 @@ namespace CgiApiRework.Controllers
             return Vacancy.GetListVacancy();
         }
 
+        [Route("api/vacancy/asc/{columnName}")]
+        [HttpGet]
+        public ArrayList GetVacancyListASC(string columnName)
+        {
+            return Vacancy.GetListVacancyFilterASC(columnName);
+        }
+
+        [Route("api/vacancy/desc/{columnName}")]
+        [HttpGet]
+        public ArrayList GetVacancyListDESC(string columnName)
+        {
+            return Vacancy.GetListVacancyFilterDESC(columnName);
+        }
+
         [Route("api/vacancy/{id}")]
         [HttpGet]
         public ArrayList GetVacancyList(int id)
