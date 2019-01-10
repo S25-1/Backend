@@ -62,7 +62,7 @@ namespace CgiApiRework.Controllers
             }
             else
             {
-                return new ArrayList { roleOfUser };
+                return new ArrayList {"the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employee) + "its a " + roleOfUser };
             }
         }
 
@@ -71,13 +71,14 @@ namespace CgiApiRework.Controllers
         [HttpGet]
         public ArrayList GetListRespondVacancyUserForEmployer(string userID)
         {
-            if (Models.User.GetUserRole(userID) == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer))
+            string roleOfUser = Models.User.GetUserRole(userID);
+            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer))
             {
                 return Vacancy.GetListRespondVacancyUserForEmployer(userID);
             }
             else
             {
-                return new ArrayList { "user doesnt have a role" };
+                return new ArrayList { "the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer) + "its a " + roleOfUser };
             }
         }
 
