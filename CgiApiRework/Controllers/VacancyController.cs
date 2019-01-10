@@ -50,11 +50,20 @@ namespace CgiApiRework.Controllers
             return Vacancy.GetListRespondVacancyUser();
         }
 
-        [Route("api/vacancy/responses/{userid}")]
+        //For employee
+        [Route("api/vacancy/responses/employee/{userid}")]
         [HttpGet]
-        public ArrayList GetListRespondVacancyUser(string userID)
+        public ArrayList GetListRespondVacancyUserForEmployee(string userID)
         {
-            return Vacancy.GetListRespondVacancyUser(userID);
+            return Vacancy.GetListRespondVacancyUserForEmployee(userID);
+        }
+
+        //For employer
+        [Route("api/vacancy/responses/employer/{userid}")]
+        [HttpGet]
+        public ArrayList GetListRespondVacancyUserForEmployer(string userID)
+        {
+            return Vacancy.GetListRespondVacancyUserForEmployer(userID);
         }
 
 
