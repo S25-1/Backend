@@ -1133,6 +1133,74 @@ namespace CgiApiRework.Models
             }
         }
 
+        static public ArrayList GetListRespondVacancyUser(string userID)
+        {
+            ArrayList RespondVacancyUserList = new ArrayList();
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@UserID", userID);
+
+                    command.CommandText = "SELECT v.VacancyID, v.Name, v.Description, j.Job_name, au.UserID, u.UserName, s.StatusID ,s.Status_name, u.PhoneNumber, u.Email, v.Date_begin, v.Date_end  FROM Job_Type j, Status s, Vacancy v, AcceptedUser au LEFT JOIN AspNetUsers u ON u.Id = au.UserID WHERE au.VacancyID = v.VacancyID AND s.StatusID = au.StatusID AND j.Job_typeID = v.Job_TypeID AND v.UserID = @UserID";
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                RespondVacancyUser RespondVacancyUser = new RespondVacancyUser(reader.GetInt32(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4)
+                                , reader.GetString(5), reader.GetInt32(6), reader.GetString(7), reader.GetString(8), reader.GetString(9),
+                                reader.GetDateTime(10), reader.GetDateTime(11));
+                                RespondVacancyUserList.Add(RespondVacancyUser);
+                            }
+                        }
+                    }
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
+
+                    Console.WriteLine("Both records are written to database.");
+
+                    return RespondVacancyUserList;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return RespondVacancyUserList;
+                }
+            }
+        }
+
         static public ArrayList GetListRespondVacancyUser(int vacancyID)
         {
             ArrayList RespondVacancyUserList = new ArrayList();

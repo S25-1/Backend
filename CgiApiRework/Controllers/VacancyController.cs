@@ -97,6 +97,13 @@ namespace CgiApiRework.Controllers
             return Vacancy.GetListRespondVacancyUser(userID, statusID);
         }
 
+        [Route("api/vacancy/responses/{userid}")]
+        [HttpGet]
+        public ArrayList GetRespondVacancyUserListByUser(string userID)
+        {
+            return Vacancy.GetListRespondVacancyUser(userID);
+        }
+
         [Route("api/vacancy/{id}/responses")]
         [HttpGet]
         public ArrayList GetRespondVacancyUserList(int id)
