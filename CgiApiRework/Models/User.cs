@@ -8,6 +8,13 @@ using System.Threading.Tasks;
 
 namespace CgiApiRework.Models
 {
+
+    public enum ListOfUsers
+    {
+        Employer = 1,
+        Employee = 2,
+    }
+
     public class UserData
     {
         public string UserName { get; set; }
@@ -32,6 +39,8 @@ namespace CgiApiRework.Models
 
     public class User
     {
+    
+
         public string UserID { get; set; }
         public int UserTypeID { get; set; }
         public string Name { get; set; }
@@ -45,9 +54,9 @@ namespace CgiApiRework.Models
         public List<Skill> SkillList { get; set; }
         public Branch Branch { get; set; }
 
-        static private string connectionString = Startup.ConnectionString;
+        static private string ConnectionString = Startup.ConnectionString;
         //static private string connectionString = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Mike\OneDrive\school\mike_backend\CGIdatabase.mdf;Integrated Security=True;Connect Timeout=30";
-        static private SqlConnection conn = new SqlConnection(connectionString);
+        static private SqlConnection conn = new SqlConnection(ConnectionString);
 
         public User(string userID, string name, string email, string password, DateTime dateOfBirth, string phoneNumber, decimal hourly_wage, int userTypeID, Address address, Job_Type job, Branch branch, List<Skill> skillList)
         {
@@ -88,7 +97,7 @@ namespace CgiApiRework.Models
 
         public static string AddUser(User user)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
 
@@ -177,7 +186,7 @@ namespace CgiApiRework.Models
         {
             ArrayList user = new ArrayList();
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
             {
                 connection.Open();
 
@@ -233,5 +242,74 @@ namespace CgiApiRework.Models
                 }
             }
         }
-    }
+
+        //private functions
+        public static string GetUserRole(string userID)
+        {
+            string userRole = "invalid user role";
+
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                connection.Open();
+
+                SqlCommand command = connection.CreateCommand();
+                SqlTransaction transaction;
+
+                // Start a local transaction.
+                transaction = connection.BeginTransaction("SampleTransaction");
+
+                // Must assign both transaction object and connection
+                // to Command object for a pending local transaction
+                command.Connection = connection;
+                command.Transaction = transaction;
+
+                try
+                {
+                    command.Parameters.AddWithValue("@userID", userID);
+
+                    command.CommandText = "SELECT r.Name " +
+                                            "FROM AspNetUserRoles ur, AspNetRoles r " +
+                                            "WHERE ur.RoleId = r.Id AND ur.UserId = @userID";
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows)
+                        {
+                            while (reader.Read())
+                            {
+                                userRole = reader.GetString(0);
+                            }
+                        }
+                    }
+                    // Attempt to commit the transaction.
+                    transaction.Commit();
+
+                    Console.WriteLine("Both records are written to database.");
+
+                    return userRole;
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Commit Exception Type: {0}", ex.GetType());
+                    Console.WriteLine("  Message: {0}", ex.Message);
+
+                    // Attempt to roll back the transaction.
+                    try
+                    {
+                        transaction.Rollback();
+                    }
+                    catch (Exception ex2)
+                    {
+                        // This catch block will handle any errors that may have occurred
+                        // on the server that would cause the rollback to fail, such as
+                        // a closed connection.
+                        Console.WriteLine("Rollback Exception Type: {0}", ex2.GetType());
+                        Console.WriteLine("  Message: {0}", ex2.Message);
+                    }
+                    return userRole;
+                }
+            }
+        }
+     }
 }

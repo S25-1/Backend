@@ -55,7 +55,15 @@ namespace CgiApiRework.Controllers
         [HttpGet]
         public ArrayList GetListRespondVacancyUserForEmployee(string userID)
         {
-            return Vacancy.GetListRespondVacancyUserForEmployee(userID);
+            string roleOfUser = Models.User.GetUserRole(userID);
+            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employee))
+            {
+                return Vacancy.GetListRespondVacancyUserForEmployee(userID);
+            }
+            else
+            {
+                return new ArrayList { roleOfUser };
+            }
         }
 
         //For employer
@@ -63,16 +71,29 @@ namespace CgiApiRework.Controllers
         [HttpGet]
         public ArrayList GetListRespondVacancyUserForEmployer(string userID)
         {
-            return Vacancy.GetListRespondVacancyUserForEmployer(userID);
+            if (Models.User.GetUserRole(userID) == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer))
+            {
+                return Vacancy.GetListRespondVacancyUserForEmployer(userID);
+            }
+            else
+            {
+                return new ArrayList { "user doesnt have a role" };
+            }
         }
 
-
         // Krijgt een lijst van gereageerde werknemers met het aangegeven VacancyID en StatusID
-        [Route("api/vacancy/GetRespondVacancyUser")]
+        [Route("api/vacancy/{vacancyID}/responses/{statusid}")]
         [HttpGet]
-        public ArrayList GetRespondVacancyUserList(int vacancyID, int statusID)
+        public ArrayList GetRespondVacancyUserListByVacancy(int vacancyID, int statusID)
         {
             return Vacancy.GetListRespondVacancyUser(vacancyID, statusID);
+        }
+
+        [Route("api/vacancy/responses/{userid}/{statusid}")]
+        [HttpGet]
+        public ArrayList GetRespondVacancyUserListByUser(string userID, int statusID)
+        {
+            return Vacancy.GetListRespondVacancyUser(userID, statusID);
         }
 
         [Route("api/vacancy/{id}/responses")]
