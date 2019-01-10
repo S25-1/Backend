@@ -56,13 +56,13 @@ namespace CgiApiRework.Controllers
         public ArrayList GetListRespondVacancyUserForEmployee(string userID)
         {
             string roleOfUser = Models.User.GetUserRole(userID);
-            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employee))
+            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.employee))
             {
                 return Vacancy.GetListRespondVacancyUserForEmployee(userID);
             }
             else
             {
-                return new ArrayList {"the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employee) + "its a " + roleOfUser };
+                return new ArrayList {"the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.employee) + "its a " + roleOfUser };
             }
         }
 
@@ -72,13 +72,13 @@ namespace CgiApiRework.Controllers
         public ArrayList GetListRespondVacancyUserForEmployer(string userID)
         {
             string roleOfUser = Models.User.GetUserRole(userID);
-            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer))
+            if (roleOfUser == Enum.GetName(typeof(ListOfUsers), ListOfUsers.employer))
             {
                 return Vacancy.GetListRespondVacancyUserForEmployer(userID);
             }
             else
             {
-                return new ArrayList { "the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.Employer) + "its a " + roleOfUser };
+                return new ArrayList { "the role isnt a: " + Enum.GetName(typeof(ListOfUsers), ListOfUsers.employer) + " its a " + roleOfUser };
             }
         }
 

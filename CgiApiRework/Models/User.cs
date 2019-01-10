@@ -11,8 +11,8 @@ namespace CgiApiRework.Models
 
     public enum ListOfUsers
     {
-        Employer = 1,
-        Employee = 2,
+        employer = 1,
+        employee = 2,
     }
 
     public class UserData
