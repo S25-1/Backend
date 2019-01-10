@@ -40,11 +40,11 @@ namespace CgiApiRework.Models
             UserStatusName = userStatusName;
         }
 
-        public RespondVacancyUser(int vacancyID, string userID, int userStatusID)
+        public RespondVacancyUser(int vacancyID, string userID, string userStatusID)
         {
             VacancyID = vacancyID;
             UserID = userID;
-            UserStatusID = userStatusID;
+            UserStatusID = Convert.ToInt32(userStatusID);
         }
     }
 
